@@ -161,28 +161,37 @@ class RiskAnalyzer:
         flags_block = self._format_flags_for_prompt(report.flags)
 
         prompt = textwrap.dedent(f"""
-            Eres Cypher, un asistente experto en seguridad de tokens en la blockchain de Solana.
-            Analiza el siguiente reporte de seguridad y explica los riesgos al usuario en español,
-            de forma clara, concisa y sin tecnicismos innecesarios.
-
-            === REPORTE DE SEGURIDAD ===
-            Dirección analizada : {report.address}
-            Score de riesgo     : {report.score} / 100
-            Nivel de severidad  : {report.severity}
-
-            === SEÑALES DETECTADAS ===
+            You are Cypher, an expert token security assistant on the Solana blockchain.
+            Analyze the attached security report and generate an explanation in English for the user.
+            
+            Your tone should be professional, forensic, and objective. Do not use alarmist language if the risk is low.
+            
+            === SECURITY REPORT ===
+            Analyzed Address : {report.address}
+            Risk Score       : {report.score} / 100
+            Severity Level   : {report.severity}
+            
+            === DETECTED SIGNALS ===
             {flags_block}
+            
+            === FORMATTING AND RESPONSE INSTRUCTIONS ===
+            1. **Summary**: Start with a single sentence.
+               - If the level is LOW, use the ✅ emoji. Example: "The token does not present significant technical risks according to the analyzed rules."
+               - If the level is MEDIUM, use ⚠️. Example: "Moderate warning signals were detected requiring caution."
+               - If the level is CRITICAL, use 🚨. Example: "This token presents critical risks and interacting with it could be dangerous."
+               - IMPORTANT: Do not use 🚨 or ⚠️ if the risk is LOW. Do not contradict the severity level.
+            
+            2. **Analysis**: Briefly explain the detected signals (max 2 sentences per signal). If there are no signals, state that the contract complies with basic analyzed best practices (like not having dangerous authorities active).
+            
+            3. **Recommendation**: End with a concrete, single-sentence action recommendation.
+               - For LOW risk: "Technically looks clean, but if the token is very new (like those from pump.fun), the risk of scam or market manipulation remains EXTREMELY HIGH. Proceed with extreme caution."
+               - For MEDIUM risk: "Proceed with caution; verify who controls the token and if liquidity is locked."
+               - For CRITICAL risk: "I do not recommend interacting with this token due to the detected risks."
+            
+            Respond directly and structured. Do not add introductions like "Sure, here is..." or sign-offs.
 
-            === INSTRUCCIONES DE RESPUESTA ===
-            1. Comienza con un resumen de UNA oración que indique si el token es peligroso o no.
-            2. Explica cada señal detectada en un párrafo corto (máximo 3 oraciones).
-            3. Termina con una recomendación de acción concreta para el usuario
-               (ej: "No inviertas", "Procede con cautela", "Parece seguro pero investiga más").
-            4. Usa emojis moderadamente para mejorar la legibilidad (🚨 para riesgos críticos,
-               ⚠️ para advertencias, ✅ para aspectos limpios).
-            5. NO uses lenguaje alarmista si el score es bajo.
-            6. Responde SOLO con el análisis, sin saludos ni despedidas.
         """).strip()
+
 
         return prompt
 
@@ -194,21 +203,21 @@ class RiskAnalyzer:
     def _classify_severity(score: int) -> str:
         """Map a numeric score to a human-readable severity label."""
         if score > 60:
-            return "CRÍTICO"
+            return "CRITICAL"
         if score > 25:
-            return "MEDIO"
-        return "BAJO"
+            return "MEDIUM"
+        return "LOW"
 
     @staticmethod
     def _format_flags_for_prompt(flags: list[RiskFlag]) -> str:
         """Render the flags list as a numbered, prompt-friendly string."""
         if not flags:
-            return "✅ No se detectaron señales de riesgo."
+            return "✅ No risk signals detected."
 
         lines: list[str] = []
         for i, flag in enumerate(flags, start=1):
             lines.append(
-                f"{i}. [{flag.rule_name}] (severidad +{flag.severity})\n"
+                f"{i}. [{flag.rule_name}] (severity +{flag.severity})\n"
                 f"   {flag.description}"
             )
         return "\n".join(lines)

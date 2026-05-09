@@ -47,8 +47,8 @@ class MintAuthorityRule(RiskRule):
             return RiskFlag(
                 rule_name=self.name,
                 description=(
-                    "Mint Authority activa: el creador puede emitir tokens ilimitados, "
-                    "diluyendo el valor de los holders existentes (vector principal de rug-pull)."
+                    "Mint Authority active: the creator can issue unlimited tokens, "
+                    "diluting the value for existing holders (primary rug-pull vector)."
                 ),
                 severity=self._SEVERITY,
             )
@@ -84,8 +84,8 @@ class FreezeAuthorityRule(RiskRule):
             return RiskFlag(
                 rule_name=self.name,
                 description=(
-                    "Freeze Authority activa: el emisor puede congelar cuentas de tokens "
-                    "de cualquier holder, impidiendo transferencias o ventas (patrón honeypot)."
+                    "Freeze Authority active: the issuer can freeze token accounts "
+                    "of any holder, preventing transfers or sales (honeypot pattern)."
                 ),
                 severity=self._SEVERITY,
             )
@@ -128,9 +128,9 @@ class SimulationSuccessRule(RiskRule):
             return RiskFlag(
                 rule_name=self.name,
                 description=(
-                    f"Simulación de transacción fallida: '{error_detail}'. "
-                    "La transacción real probablemente revertirá — posible honeypot o "
-                    "restricción de transferencia oculta."
+                    f"Transaction simulation failed: '{error_detail}'. "
+                    "The actual transaction will likely revert — possible honeypot or "
+                    "hidden transfer restriction."
                 ),
                 severity=self._SEVERITY,
             )
@@ -170,9 +170,9 @@ class SupplyConcentrationRule(RiskRule):
             return RiskFlag(
                 rule_name=self.name,
                 description=(
-                    f"Concentración de supply crítica: la wallet principal posee el "
-                    f"{top_pct:.1f}% del suministro circulante. "
-                    "Un dump coordinado puede colapsar el precio en segundos."
+                    f"Critical supply concentration: the top wallet holds "
+                    f"{top_pct:.1f}% of the circulating supply. "
+                    "A coordinated dump could collapse the price in seconds."
                 ),
                 severity=self._SEVERITY,
             )

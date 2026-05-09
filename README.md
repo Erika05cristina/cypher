@@ -8,9 +8,19 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-19+-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![Anchor](https://img.shields.io/badge/Anchor-0.30.1-9945FF?style=flat-square&logo=solana&logoColor=white)](https://anchor-lang.com)
-[![Solana](https://img.shields.io/badge/Solana-Mainnet%2FDevnet-14F195?style=flat-square&logo=solana&logoColor=white)](https://solana.com)
+[![Solana](https://img.shields.io/badge/Solana-Devnet-14F195?style=flat-square&logo=solana&logoColor=white)](https://solana.com)
 
 </div>
+
+---
+
+## 🚀 Deployment Addresses
+
+| Contract | Network | Address |
+|---|---|---|
+| **Trust Registry** (Anchor) | **Devnet** | [`HQtLF8KAA5B2iRXgr1Pjdb7DEFiWPWVrp1UXQrhKm5o1`](https://explorer.solana.com/address/HQtLF8KAA5B2iRXgr1Pjdb7DEFiWPWVrp1UXQrhKm5o1?cluster=devnet) |
+
+> Verified on Solana Explorer — Block 461,230,688 · Executable · Upgradeable
 
 ---
 
@@ -23,6 +33,7 @@ Cypher es una herramienta de **inteligencia de riesgos on-chain** que analiza to
 3. **Registro inmutable on-chain** — Los resultados se graban en un Smart Contract en Solana, creando un historial público de auditorías que nadie puede manipular.
 
 ---
+
 
 ## Arquitectura General
 

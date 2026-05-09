@@ -11,8 +11,13 @@ without touching this file.
 from __future__ import annotations
 
 import os
-
 from dotenv import load_dotenv
+
+# ⚠️ load_dotenv() MUST be called before importing any service module
+# that reads env vars at module level (e.g. RegistryService reads
+# TRUST_REGISTRY_PROGRAM_ID when the module is first imported).
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -21,9 +26,9 @@ from solders.pubkey import Pubkey
 
 from analyzers import RiskAnalyzer
 from services.simulation_service import SimulationService
+from services.registry_service import RegistryService
+from services.ai_service import AIService
 from utils.solana_utils import decode_token_mint
-
-load_dotenv()
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -47,8 +52,11 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 
 solana_client = Client(os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"))
-sim_service = SimulationService()
-risk_analyzer = RiskAnalyzer.with_default_rules()   # ← all default rules loaded here
+sim_service    = SimulationService()
+risk_analyzer  = RiskAnalyzer.with_default_rules()  # ← all default rules loaded here
+registry_service = RegistryService()                # ← wires Python to SolPG contract
+ai_service     = AIService()                        # ← auto-detects Gemini/OpenAI/Anthropic
+
 
 # ---------------------------------------------------------------------------
 # Request / Response schemas
@@ -79,8 +87,14 @@ async def analyze(request: AnalyzeRequest):
     """
     try:
         # --- 1. Fetch on-chain data -----------------------------------------
+        print(f"\n[INFO] 🔍 Iniciando análisis para token: {request.address}")
         pubkey = Pubkey.from_string(request.address)
         acc_info = solana_client.get_account_info(pubkey)
+
+        if acc_info.value:
+            print("[INFO] ✅ Datos del token encontrados en la blockchain (Devnet).")
+        else:
+            print("[WARNING] ⚠️ Token NO encontrado en Devnet (Si es real, debe estar en Mainnet).")
 
         # --- 2. Build context dict for the risk engine ----------------------
         context: dict = {}
@@ -89,6 +103,9 @@ async def analyze(request: AnalyzeRequest):
             mint_data = decode_token_mint(acc_info.value.data)
             context["mint_authority_enabled"] = mint_data.get("mint_authority_enabled", False)
             context["freeze_authority_enabled"] = mint_data.get("freeze_authority_enabled", False)
+
+        print(f"[INFO] ⚙️ Contexto final extraído para el motor: {context}")
+
 
         # --- 3. Optional transaction simulation -----------------------------
         sim_result = None
@@ -100,25 +117,37 @@ async def analyze(request: AnalyzeRequest):
         # --- 4. Run the Risk Engine -----------------------------------------
         report = risk_analyzer.run(address=request.address, context=context)
 
-        # --- 5. Build AI prompt (LLM call deferred to caller) ---------------
-        ai_prompt = risk_analyzer.build_ai_prompt(report)
+        # --- 5. Generar prompt y llamar al LLM --------------------------------
+        ai_prompt       = risk_analyzer.build_ai_prompt(report)
+        ai_explanation  = await ai_service.explain(ai_prompt)   # ← llamada real a la IA
+
+        # --- 6. Guardar en la Blockchain (Trust Registry) -------------------
+        tx_sig = None
+        try:
+            tx_sig = await registry_service.submit_report(report)
+        except Exception as e:
+            print(f"Error al guardar en blockchain: {e}")
+            tx_sig = f"Error: {str(e)}"
 
         return {
-            "address": report.address,
-            "score": report.score,
-            "severity": report.severity,
+            "address":        report.address,
+            "score":          report.score,
+            "severity":       report.severity,
             "flags": [
                 {
-                    "rule": f.rule_name,
+                    "rule":        f.rule_name,
                     "description": f.description,
-                    "severity": f.severity,
+                    "severity":    f.severity,
                 }
                 for f in report.flags
             ],
-            "simulation": sim_result,
-            "ai_prompt": ai_prompt,          # ready to send to your LLM
-            "ai_summary": "Integra tu LLM: envía `ai_prompt` a tu modelo preferido.",
+            "simulation":     sim_result,
+            "ai_explanation": ai_explanation,   # ← respuesta real del LLM en español
+            "ai_prompt":      ai_prompt,         # ← prompt crudo (para debug/referencia)
+            "ai_provider":    ai_service.provider_name,
+            "tx_signature":   tx_sig,
         }
+
 
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

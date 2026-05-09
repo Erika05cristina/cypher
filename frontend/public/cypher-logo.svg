@@ -1,0 +1,90 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="solanaGradient" x1="80" y1="80" x2="432" y2="432" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f72585"/>
+      <stop offset="50%" stop-color="#7b2fbe"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+
+    <linearGradient id="eyeGradient" x1="140" y1="256" x2="372" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f72585"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="48" fill="#0c0a0f"/>
+
+  <!-- Outer Hexagon -->
+  <polygon
+    points="256,70 408,156 408,356 256,442 104,356 104,156"
+    stroke="url(#solanaGradient)"
+    stroke-width="14"
+    fill="rgba(21,16,30,0.7)"
+    filter="url(#glow)"
+  />
+
+  <!-- Inner Hexagon -->
+  <polygon
+    points="256,115 368,180 368,332 256,397 144,332 144,180"
+    stroke="#2a1f3d"
+    stroke-width="4"
+    fill="none"
+  />
+
+  <!-- Circuit Lines -->
+  <g stroke="#7b2fbe" stroke-width="3" opacity="0.8">
+    <line x1="180" y1="180" x2="140" y2="150"/>
+    <line x1="180" y1="332" x2="140" y2="362"/>
+    <line x1="332" y1="180" x2="372" y2="150"/>
+    <line x1="332" y1="332" x2="372" y2="362"/>
+
+    <circle cx="140" cy="150" r="5" fill="#f72585"/>
+    <circle cx="140" cy="362" r="5" fill="#f72585"/>
+    <circle cx="372" cy="150" r="5" fill="#00E5FF"/>
+    <circle cx="372" cy="362" r="5" fill="#00E5FF"/>
+  </g>
+
+  <!-- Eye Shape -->
+  <path
+    d="M136 256C168 204 214 176 256 176C298 176 344 204 376 256C344 308 298 336 256 336C214 336 168 308 136 256Z"
+    stroke="url(#eyeGradient)"
+    stroke-width="12"
+    fill="none"
+    filter="url(#glow)"
+  />
+
+  <!-- Center Core -->
+  <circle
+    cx="256"
+    cy="256"
+    r="54"
+    stroke="url(#solanaGradient)"
+    stroke-width="10"
+    fill="#15101e"
+    filter="url(#glow)"
+  />
+
+  <!-- Solana Inspired Bars -->
+  <g fill="url(#solanaGradient)">
+    <rect x="220" y="225" width="72" height="14" rx="7" transform="rotate(-12 220 225)"/>
+    <rect x="220" y="248" width="72" height="14" rx="7" transform="rotate(-12 220 248)"/>
+    <rect x="220" y="271" width="72" height="14" rx="7" transform="rotate(-12 220 271)"/>
+  </g>
+
+  <!-- Glow Dots -->
+  <g fill="#00E5FF" opacity="0.7">
+    <circle cx="256" cy="100" r="3"/>
+    <circle cx="256" cy="412" r="3"/>
+    <circle cx="104" cy="256" r="3"/>
+    <circle cx="408" cy="256" r="3"/>
+  </g>
+</svg>
