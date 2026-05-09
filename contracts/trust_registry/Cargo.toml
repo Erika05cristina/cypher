@@ -1,0 +1,33 @@
+[package]
+name    = "trust_registry"
+version = "0.1.0"
+edition = "2021"
+description = "Cypher Trust Registry — on-chain forensic audit log for Solana tokens."
+
+# Anchor programs MUST be compiled as a dynamic library.
+[lib]
+crate-type = ["cdylib", "lib"]
+name       = "trust_registry"
+
+[features]
+# The "no-entrypoint" feature lets other on-chain programs CPI-call us
+# without duplicating the BPF entrypoint symbol.
+no-entrypoint = []
+no-idl        = []
+no-log-ix-name = []
+cpi           = ["no-entrypoint"]
+default       = []
+
+[dependencies]
+# Anchor framework — provides macros, accounts, error handling, and IDL generation.
+anchor-lang = "0.30.1"
+
+[dev-dependencies]
+# Needed for local unit tests that don't run on-chain.
+anchor-lang = { version = "0.30.1", features = ["init-if-needed"] }
+
+[profile.release]
+# Aggressively optimise the BPF binary size — important for Solana's 128KB limit.
+overflow-checks = true
+lto             = "thin"
+opt-level       = "z"

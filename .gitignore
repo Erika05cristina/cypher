@@ -1,0 +1,85 @@
+# ============================================================
+#  Cypher — .gitignore
+#  Cubre: Python · Node.js · Rust/Anchor · Solana · OS
+# ============================================================
+
+# ── Python ────────────────────────────────────────────────
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ── Variables de entorno (NUNCA subir claves) ─────────────
+.env
+.env.local
+.env.*.local
+*.env
+
+# ── Solana Keypairs (CRÍTICO — nunca subir) ───────────────
+*.json.keypair
+id.json
+*-keypair.json
+wallet.json
+
+# ── Rust / Anchor ─────────────────────────────────────────
+target/
+**/*.rs.bk
+Cargo.lock          # No se sube en librerías; sí en binarios finales
+.anchor/
+contracts/trust_registry/target/
+
+# ── Node.js / Frontend ────────────────────────────────────
+node_modules/
+dist/
+.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── IDEs y editores ───────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+
+# ── Sistema Operativo ─────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ── Miscelánea ────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig
+coverage/
