@@ -374,12 +374,12 @@ export function ScannerView() {
             <span className="font-mono" style={{ fontSize: '0.72rem', color: '#c084fc', fontWeight: 600, letterSpacing: '0.1em' }}>
               TRANSACTION SIMULATION
             </span>
-            <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: 99, background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#22c55e', fontWeight: 700 }}>
-              AUTO ✓
+            <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: 99, background: 'rgba(123,47,190,0.1)', border: '1px solid rgba(123,47,190,0.3)', color: '#c084fc', fontWeight: 700 }}>
+              OPTIONAL
             </span>
           </div>
           <p style={{ fontSize: '0.72rem', color: '#7a6b8a', lineHeight: 1.5, marginBottom: 10 }}>
-            Cypher automatically builds and simulates a synthetic transfer for this token on Solana RPC — detecting honeypots without spending any real funds.
+            Provide a base64-encoded transaction to simulate a buy/sell on-chain and detect hidden honeypot traps.
           </p>
 
           {/* Advanced: manual tx override */}
