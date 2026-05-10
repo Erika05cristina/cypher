@@ -113,23 +113,34 @@ async def analyze(request: AnalyzeRequest):
             mint_data = decode_token_mint(acc_info.value.data)
             context["mint_authority_enabled"] = mint_data.get("mint_authority_enabled", False)
             context["freeze_authority_enabled"] = mint_data.get("freeze_authority_enabled", False)
+            
+            # --- Fetch Supply Concentration ---
+            try:
+                active_client = client_mainnet if network_found == "Mainnet" else client_devnet
+                supply_res = active_client.get_token_supply(pubkey)
+                if supply_res.value:
+                    total_supply = float(supply_res.value.ui_amount)
+                    largest_res = active_client.get_token_largest_accounts(pubkey)
+                    if largest_res.value and total_supply > 0:
+                        top_amount = float(largest_res.value[0].ui_amount)
+                        context["top_holder_pct"] = (top_amount / total_supply) * 100
+                        print(f"[INFO] 🐋 Top holder tiene {context['top_holder_pct']:.1f}%")
+            except Exception as e:
+                print(f"[WARNING] ⚠️ Error obteniendo top holders: {e}")
 
         print(f"[INFO] ⚙️ Contexto final extraído para el motor: {context}")
-
 
         # --- 3. Transaction simulation (only when tx provided) ---------------
         sim_result = None
         if request.tx_base64:
             print(f"[INFO] 🧪 Running manual simulation for {request.address} on {network_found}...")
-            # Temporal override for the simulation client
+            active_client = client_mainnet if network_found == "Mainnet" else client_devnet
             original_client = sim_service.client
-            sim_service.client = client_mainnet if network_found == "Mainnet" else client_devnet
+            sim_service.client = active_client
             
             sim_result = sim_service.simulate_tx(request.tx_base64)
             
-            # restore
             sim_service.client = original_client
-            
             context["simulation_success"] = sim_result["success"]
             context["simulation_error"]   = sim_result.get("error")
             print(f"[INFO] 🧪 Simulation: success={sim_result['success']}, error={sim_result.get('error')}")

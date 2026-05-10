@@ -230,8 +230,18 @@ function ResultPanel({ result }: { result: any }) {
       {result.flags.length === 0 && !result.simulation && (
         <div className="card" style={{ padding: 24, textAlign: 'center' }}>
           <div style={{ fontSize: '2rem', marginBottom: 8 }}>✅</div>
-          <p style={{ color: '#a855f7', fontWeight: 600 }}>No risk signals detected</p>
-          <p style={{ fontSize: '0.8rem', color: '#7a6b8a', marginTop: 4 }}>This token appears clean according to our analysis rules.</p>
+          <p style={{ color: '#a855f7', fontWeight: 600 }}>Mathematically Secure Contract</p>
+          <p style={{ fontSize: '0.85rem', color: '#c4b5d4', marginTop: 8, lineHeight: 1.6 }}>
+            This token's smart contract is secure. Critical authorities (Mint & Freeze) are fully disabled.
+          </p>
+          <div style={{ marginTop: 16, background: 'rgba(255,255,255,0.03)', padding: 16, borderRadius: 8, border: '1px solid rgba(255,255,255,0.05)', textAlign: 'left' }}>
+            <span style={{ fontSize: '0.7rem', color: '#f7931e', fontWeight: 700, letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>⚠️</span> CONTRACT RISK vs MARKET RISK
+            </span>
+            <p style={{ fontSize: '0.8rem', color: '#7a6b8a', marginTop: 8, lineHeight: 1.5 }}>
+              Cypher analyzes <strong>Contract Risk</strong> (cryptographic backdoors, honeypots). A score of 0 means the developer cannot steal funds via code manipulation. However, memecoins (like Pump.fun launches) still carry <strong>Market Risk</strong> if the creator holds a massive supply and decides to dump.
+            </p>
+          </div>
         </div>
       )}
 
