@@ -51,7 +51,8 @@ app.add_middleware(
 # Singletons (injected into route handlers)
 # ---------------------------------------------------------------------------
 
-solana_client = Client(os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com"))
+client_mainnet = Client("https://api.mainnet-beta.solana.com")
+client_devnet  = Client("https://api.devnet.solana.com")
 sim_service    = SimulationService()
 risk_analyzer  = RiskAnalyzer.with_default_rules()  # ← all default rules loaded here
 registry_service = RegistryService()                # ← wires Python to SolPG contract
@@ -88,13 +89,22 @@ async def analyze(request: AnalyzeRequest):
     try:
         # --- 1. Fetch on-chain data -----------------------------------------
         print(f"\n[INFO] 🔍 Iniciando análisis para token: {request.address}")
-        pubkey = Pubkey.from_string(request.address)
-        acc_info = solana_client.get_account_info(pubkey)
+        try:
+            pubkey = Pubkey.from_string(request.address)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid Solana address format. Please provide a valid base58 public key.")
+        acc_info = client_mainnet.get_account_info(pubkey)
+        network_found = "Mainnet"
+
+        if not acc_info.value:
+            acc_info = client_devnet.get_account_info(pubkey)
+            network_found = "Devnet"
 
         if acc_info.value:
-            print("[INFO] ✅ Datos del token encontrados en la blockchain (Devnet).")
+            print(f"[INFO] ✅ Datos del token encontrados en {network_found}.")
         else:
-            print("[WARNING] ⚠️ Token NO encontrado en Devnet (Si es real, debe estar en Mainnet).")
+            print("[WARNING] ⚠️ Token NO encontrado en ninguna red.")
+            raise HTTPException(status_code=400, detail="Token not found. Make sure you entered a valid address for Mainnet or Devnet.")
 
         # --- 2. Build context dict for the risk engine ----------------------
         context: dict = {}
@@ -110,8 +120,16 @@ async def analyze(request: AnalyzeRequest):
         # --- 3. Transaction simulation (only when tx provided) ---------------
         sim_result = None
         if request.tx_base64:
-            print(f"[INFO] 🧪 Running manual simulation for {request.address}...")
+            print(f"[INFO] 🧪 Running manual simulation for {request.address} on {network_found}...")
+            # Temporal override for the simulation client
+            original_client = sim_service.client
+            sim_service.client = client_mainnet if network_found == "Mainnet" else client_devnet
+            
             sim_result = sim_service.simulate_tx(request.tx_base64)
+            
+            # restore
+            sim_service.client = original_client
+            
             context["simulation_success"] = sim_result["success"]
             context["simulation_error"]   = sim_result.get("error")
             print(f"[INFO] 🧪 Simulation: success={sim_result['success']}, error={sim_result.get('error')}")
