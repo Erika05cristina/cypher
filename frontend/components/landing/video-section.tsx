@@ -37,56 +37,19 @@ export function VideoSection() {
           
           {/* Video wrapper */}
           <div className="relative aspect-video rounded-2xl overflow-hidden glass">
-            {/* Video placeholder background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-surface via-bg to-surface">
-              {/* Grid pattern */}
-              <div className="absolute inset-0 cyber-grid opacity-50" />
-              
-              {/* Animated glow spots */}
-              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-pink/20 rounded-full blur-3xl animate-pulse-glow" />
-              <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-violet/20 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
-            </div>
-
-            {/* CYPHER logo/text overlay */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-4xl md:text-6xl font-bold gradient-text mb-4 text-glow-pink">
-                  CYPHER
-                </div>
-                <div className="text-sm font-mono text-muted-foreground">
-                  Demo Video Coming Soon
-                </div>
-              </div>
-            </div>
-
-            {/* Play button overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-bg/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="w-20 h-20 rounded-full glass glow-pink flex items-center justify-center hover:scale-110 transition-transform">
-                <Play className="w-8 h-8 text-pink ml-1" fill="currentColor" />
-              </button>
-            </div>
-
-            {/* Video controls bar */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-bg to-transparent">
-              <div className="flex items-center gap-4">
-                {/* Progress bar */}
-                <div className="flex-1 h-1 rounded-full bg-border overflow-hidden">
-                  <div className="w-0 h-full bg-gradient-to-r from-pink to-violet" />
-                </div>
-                
-                {/* Time */}
-                <span className="text-xs font-mono text-muted-foreground">0:00 / 2:34</span>
-                
-                {/* Volume */}
-                <Volume2 className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </div>
+            <iframe 
+              src="https://www.youtube.com/embed/VH6lXPZUuvk" 
+              title="Cypher Pitch Video" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowFullScreen
+              className="absolute inset-0 w-full h-full border-0"
+            ></iframe>
 
             {/* Corner accents */}
-            <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-pink/50 rounded-tl-lg" />
-            <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-violet/50 rounded-tr-lg" />
-            <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-violet/50 rounded-bl-lg" />
-            <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-pink/50 rounded-br-lg" />
+            <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-pink/50 rounded-tl-lg pointer-events-none" />
+            <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-violet/50 rounded-tr-lg pointer-events-none" />
+            <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-violet/50 rounded-bl-lg pointer-events-none" />
+            <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-pink/50 rounded-br-lg pointer-events-none" />
           </div>
         </motion.div>
       </div>
