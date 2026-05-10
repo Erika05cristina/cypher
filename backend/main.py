@@ -107,12 +107,18 @@ async def analyze(request: AnalyzeRequest):
         print(f"[INFO] ⚙️ Contexto final extraído para el motor: {context}")
 
 
-        # --- 3. Optional transaction simulation -----------------------------
-        sim_result = None
+        # --- 3. Transaction simulation (auto — always runs) -----------------
+        print(f"[INFO] 🧪 Running auto-simulation for {request.address}...")
         if request.tx_base64:
+            # Manual mode: user provided a raw transaction
             sim_result = sim_service.simulate_tx(request.tx_base64)
-            context["simulation_success"] = sim_result["success"]
-            context["simulation_error"] = sim_result.get("error")
+        else:
+            # Auto mode: backend builds & simulates a synthetic transfer tx
+            sim_result = sim_service.auto_simulate(request.address)
+
+        context["simulation_success"] = sim_result["success"]
+        context["simulation_error"]   = sim_result.get("error")
+        print(f"[INFO] 🧪 Simulation result: success={sim_result['success']}, error={sim_result.get('error')}")
 
         # --- 4. Run the Risk Engine -----------------------------------------
         report = risk_analyzer.run(address=request.address, context=context)
